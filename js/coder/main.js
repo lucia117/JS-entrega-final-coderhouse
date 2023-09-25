@@ -1,5 +1,7 @@
 const EMAIL = localStorage.getItem("email")
-
+const myModal = new bootstrap.Modal(document.getElementById('registoModal'))
+const registrarPesoModal = new bootstrap.Modal(document.getElementById('registrarPesoModal'))
+registrarPesoModal.show();
 
 // Definición de la clase Persona para almacenar los datos del usuario
 function Persona({ nombre, sexo, fechaNacimiento, altura, pesoActual, aniosSobrepeso, contextura }) {
@@ -63,14 +65,13 @@ function cargarInfoInicial() {
 function cargarPaginaPrincipal() {
     if (EMAIL !== null) {
         obtenerInformacionUsuario(EMAIL).then(result => {
-            localStorage.setItem("data", JSON.stringify(result))
+            localStorage.setItem(EMAIL, JSON.stringify(result))
 
             cargarInformacionPersonal();
             generarTabla();
         });
     } else {
         //abro modal
-        var myModal = new bootstrap.Modal(document.getElementById('registoModal'))
         myModal.show();
     }
 }
@@ -139,23 +140,22 @@ document.getElementById("btn-guardar-registro").addEventListener("click", (e) =>
 
 //Funcion para cargar un peso 
 function cargarnNuevoRegistro(peso, fecha) {
-    let dataStorage = JSON.parse(localStorage.getItem("data"))
-
-    console.log(dataStorage)
-    let imc = calcIMC({ ...dataStorage.data, pesoActual: peso })
+    let dataStorage = JSON.parse(localStorage.getItem(EMAIL))
+    let imc = calcIMC({ ...dataStorage, pesoActual: peso })
     dataStorage.historialPeso.push({
         peso,
-        fecha: new Date(),
+        fecha,
         imc
     })
     localStorage.setItem(EMAIL, JSON.stringify(dataStorage));
-    location.reload();
+    guardarInformacionUsuario(EMAIL, dataStorage, registrarPesoModal);
+
 }
 
 
 //Funcion que muestra el historial de pesos
 function generarTabla() {
-    const data = JSON.parse(localStorage.getItem("data"))
+    const data = JSON.parse(localStorage.getItem(EMAIL))
     const historial = data.historialPeso;
     const table = document.getElementById("tableBody");
     let rows = "";
@@ -175,7 +175,7 @@ function generarTabla() {
 //Funcion para cargar datos personales
 function cargarInformacionPersonal() {
 
-    const data = JSON.parse(localStorage.getItem("data"))
+    const data = JSON.parse(localStorage.getItem(EMAIL))
     //ultimo peso registrado
     document.getElementById("ultimo-peso").textContent = data.historialPeso[data.historialPeso.length - 1].peso;
     document.getElementById("fecha-ultimo-peso").textContent = formatearFecha(data.historialPeso[data.historialPeso.length - 1].fecha);

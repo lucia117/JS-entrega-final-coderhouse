@@ -46,9 +46,11 @@ const iniciarSesionFirebase = async (email, password) => {
     console.log("comienzo", email, password);
     firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
-            const user = userCredential.user;
-            localStorage.setItem("user", user);
-            window.location = "../../index.html";
+            const user = JSON.stringify(userCredential.user);
+            localStorage.setItem("email", email);
+
+            localStorage.setItem(email, user);
+            window.location = "./pages/principal.html";
         })
         .catch((error) => {
             const errorCode = error.code;

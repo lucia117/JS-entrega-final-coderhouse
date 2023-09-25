@@ -6,6 +6,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Skydash Admin</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+
   <!-- plugins:css -->
   <link rel="stylesheet" href="../vendors/feather/feather.css">
   <link rel="stylesheet" href="../vendors/ti-icons/css/themify-icons.css">
@@ -14,16 +18,15 @@
   <!-- Plugin css for this page -->
   <link rel="stylesheet" href="../vendors/datatables.net-bs4/dataTables.bootstrap4.css">
   <link rel="stylesheet" href="../vendors/ti-icons/css/themify-icons.css">
-  <link rel="stylesheet" type="text/css" href="../js/select.dataTables.min.css">
   <link rel="stylesheet" href="../vendors/mdi/css/materialdesignicons.min.css">
 
-
-
+  <link rel="stylesheet" type="text/css" href="../js/select.dataTables.min.css">
   <!-- End plugin css for this page -->
   <!-- inject:css -->
   <link rel="stylesheet" href="../css/vertical-layout-light/style.css">
   <!-- endinject -->
   <link rel="shortcut icon" href="../images/favicon.png" />
+
 </head>
 
 <body>
@@ -31,9 +34,9 @@
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <a class="navbar-brand brand-logo mr-5" href="index.html"><img src="images/logo.svg" class="mr-2"
+        <a class="navbar-brand brand-logo mr-5" href="index.html"><img src="../images/logo.svg" class="mr-2"
             alt="logo" /></a>
-        <a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/logo-mini.svg" alt="logo" /></a>
+        <a class="navbar-brand brand-logo-mini" href="index.html"><img src="../images/logo-mini.svg" alt="logo" /></a>
       </div>
 
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
@@ -45,7 +48,7 @@
 
           <li class="nav-item nav-profile dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-              <img src="images/faces/face28.jpg" alt="profile" />
+              <img src="../images/faces/face28.jpg" alt="profile" />
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
               <a class="dropdown-item">
@@ -66,6 +69,7 @@
         </button>
       </div>
     </nav>
+
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
       <!-- partial:partials/_settings-panel.html -->
@@ -97,21 +101,19 @@
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
           <li class="nav-item">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="../index.html">
               <i class="icon-grid menu-icon"></i>
               <span class="menu-title">Inicio</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="pages/documentation/documentation.html">
+            <a class="nav-link" href="#">
               <i class="mdi mdi-settings icon-grid menu-icon "></i>
               <span class="menu-title">Configuraciones</span>
             </a>
           </li>
         </ul>
       </nav>
-
-
 
       <!-- partial -->
       <div class="main-panel">
@@ -125,12 +127,14 @@
               </div>
             </div>
           </div>
+
+
           <div class="row">
             <!-- Seccion imagen -->
             <div class="col-md-6 grid-margin stretch-card">
               <div class="card tale-bg">
                 <div class="card-people mt-auto">
-                  <img src="images/dashboard/people.svg" alt="people">
+                  <img src="../images/dashboard/people.svg" alt="people">
                   <div class="weather-info">
                     <div class="d-flex">
                       <div>
@@ -145,24 +149,26 @@
                 </div>
               </div>
             </div>
-
             <div class="col-md-6 grid-margin transparent">
               <div class="row">
                 <div class="col-md-6 mb-4 stretch-card transparent">
                   <div class="card card-tale">
+                    <!--ultimo peso registrado -->
                     <div class="card-body">
                       <p class="mb-4">Ultimo peso registrado</p>
-                      <p class="fs-30 mb-2">88 kg</p>
-                      <p>Fecha: 14/09/2023</p>
+                      <p id="ultimo-peso" class="fs-30 mb-2"></p>
+                      <p id="fecha-ultimo-peso"> </p>
                     </div>
                   </div>
                 </div>
+
+                <!-- IMC -->
                 <div class="col-md-6 mb-4 stretch-card transparent">
                   <div class="card card-dark-blue">
                     <div class="card-body">
                       <p class="mb-4"><strong>IMC</strong> Indice de masa corporal </p>
-                      <p class="fs-30 mb-2">58.82 Kg/m² </p>
-                      <p>Obesidad clase III</p>
+                      <p id="imc" class="fs-30 mb-2"></p>
+                      <p id="tipo-imc"></p>
                     </div>
                   </div>
                 </div>
@@ -171,33 +177,30 @@
                 <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
                   <div class="card card-light-blue">
                     <div class="card-body">
-                      <p class="mb-4">Peso Posible</p>
-                      <p class="fs-30 mb-2">93.1 Kg - 94.101 Kg</p>
-                      <p>2.00% (30 days)</p>
+                      <p class="mb-4">Peso Ideal</p>
+                      <p id="peso-ideal" class="fs-30 mb-2"></p>
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6 stretch-card transparent">
                   <div class="card card-light-danger">
                     <div class="card-body">
-                      <p class="mb-4">Peso Ideal</p>
-                      <p class="fs-30 mb-2">68 Kg</p>
-                      <p>0.22% (30 days)</p>
+                      <p class="mb-4">Peso Posible</p>
+                      <p id="peso-posible" class="fs-30 mb-2"></p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="row">
 
+
+          <div class="row">
+            <!-- Tabla - Historial de peso -->
             <div class="col-md-6 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">Historial de peso</h4>
-                  <p class="card-description">
-                    Add class <code>.table</code>
-                  </p>
                   <div class="table-responsive">
                     <table class="table">
                       <thead>
@@ -205,46 +208,17 @@
                           <th>Fecha </th>
                           <th>Peso</th>
                           <th>IMC</th>
-                          <th></th>
                         </tr>
                       </thead>
-                      <tbody>
-                        <tr>
-                          <td>Jacob</td>
-                          <td>53275531</td>
-                          <td>12 May 2017</td>
-                          <td><label class="badge badge-danger">Pending</label></td>
-                        </tr>
-                        <tr>
-                          <td>Messsy</td>
-                          <td>53275532</td>
-                          <td>15 May 2017</td>
-                          <td><label class="badge badge-warning">In progress</label></td>
-                        </tr>
-                        <tr>
-                          <td>John</td>
-                          <td>53275533</td>
-                          <td>14 May 2017</td>
-                          <td><label class="badge badge-info">Fixed</label></td>
-                        </tr>
-                        <tr>
-                          <td>Peter</td>
-                          <td>53275534</td>
-                          <td>16 May 2017</td>
-                          <td><label class="badge badge-success">Completed</label></td>
-                        </tr>
-                        <tr>
-                          <td>Dave</td>
-                          <td>53275535</td>
-                          <td>20 May 2017</td>
-                          <td><label class="badge badge-warning">In progress</label></td>
-                        </tr>
+                      <tbody id="tableBody">
                       </tbody>
                     </table>
                   </div>
                 </div>
               </div>
             </div>
+
+            <!-- Grafica - Historial de peso -->
             <div class="col-md-6 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
@@ -256,12 +230,7 @@
               </div>
             </div>
           </div>
-
-
-
         </div>
-        <!-- content-wrapper ends -->
-        <!-- partial:partials/_footer.html -->
         <footer class="footer">
           <div class="d-sm-flex justify-content-center justify-content-sm-between">
             <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021. Premium <a
@@ -271,67 +240,128 @@
                 class="ti-heart text-danger ml-1"></i></span>
           </div>
         </footer>
-        <!-- partial -->
       </div>
-      <!-- main-panel ends -->
     </div>
-    <!-- page-body-wrapper ends -->
   </div>
-  <!-- container-scroller -->
 
 
-  <!-- VER --->
+  <!-- Modal para calcular peso -->
+  <div class="modal fade" id="registoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="registoModal" aria-hidden="true">
 
-  <!-- Button trigger modal -->
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-    Launch static backdrop modal
-  </button>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body pt-3">
+          <h1 class="modal-title fs-3 " id="exampleModalLabel">👋 Hola! </h1>
+          <p class="card-description">Comencemos cargando algunos datos</p>
+          <hr class="hr border border-2" />
 
-  <!-- Modal -->
-  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <form>
+            <div class="form-group mb-1">
+              <label for="nombre-modal">Nombre:</label>
+              <input type="text" class="form-control form-control-sm" id="nombre-modal">
+            </div>
+            <div class="form-group mb-1">
+              <label for="fechaNacimiento-modal">Fecha de Nacimiento:</label>
+              <input type="date" class="form-control form-control-sm" id="fechaNacimiento-modal">
+            </div>
+            <div class="form-group mb-1">
+              <label for="sexo-modal">Sexo:</label>
+              <select class="form-control form-control-sm" id="sexo-modal">
+                <option value="">Selecciona...</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+              </select>
+            </div>
+            <div class="form-group mb-1">
+              <label for="altura-modal">Altura (cm):</label>
+              <input type="number" class="form-control form-control-sm" id="altura-modal">
+            </div>
+            <div class="form-group mb-1">
+              <label for="contextura-modal">Contextura:</label>
+              <select class=" form-control form-control-sm " id="contextura-modal" required="">
+                <option value="">Selecciona...</option>
+                <option value="C">Chica </option>
+                <option value="M">Mediana</option>
+                <option value="G">Grande</option>
+              </select>
+            </div>
+            <div class="form-group mb-1">
+              <label for="pesoActual-modal">Peso Actual (kg):</label>
+              <input type="number" class="form-control form-control-sm" id="pesoActual-modal">
+            </div>
+            <div class="form-group mb-1">
+              <label for="aniosSobrepeso-modal">Años de Sobrepeso:</label>
+              <input type="number" class="form-control" id="aniosSobrepeso-modal">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btn-cargar-inicial" class="btn btn-primary btn-rounded btn-block">Guardar</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal cargar nuevo peso -->
+  <div class="modal fade" id="registrarPesoModal" tabindex="-1" aria-labelledby="registrar-peso-modalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Cargar nuevo registro</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          ...
+        <div class="modal-body pt-2">
+          <label for="" class="col-form-label">Peso actual:</label>
+          <input type="number" class="form-control form-control-sm " id="registro-peso">
+          <label for="" class="col-form-label">Fecha:</label>
+          <input type="date" class="form-control form-control-sm" id="fecha-peso">
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Understood</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button id="btn-guardar-registro" type="button" class="btn btn-primary">Guardar</button>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Modal cargar nuevo peso  -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
-  <!-- plugins:js -->
+
   <script src="../vendors/js/vendor.bundle.base.js"></script>
-  <!-- endinject -->
-  <!-- Plugin js for this page -->
   <script src="../vendors/chart.js/Chart.min.js"></script>
   <script src="../vendors/datatables.net/jquery.dataTables.js"></script>
   <script src="../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
   <script src="../js/dataTables.select.min.js"></script>
-
-  <!-- End plugin js for this page -->
-  <!-- inject:js -->
-  <script src="../js/off-canvas.js"></script>
-  <script src="../js/hoverable-collapse.js"></script>
   <script src="../js/template.js"></script>
 
-  <script src="../js/settings.js"></script>
-  <script src="../js/todolist.js"></script>
-  <!-- endinject -->
-  <!-- Custom js for this page-->
+
   <script src="../js/dashboard.js"></script>
-  <script src="../js/Chart.roundedBarCharts.js"></script>
-  <!-- End custom js for this page-->
+
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-firestore.js"></script>
+  <script src="../js/coder/firebase-config.js"></script>
+  <script src="../js/coder/pesosycontextura.js"></script>
+  <script src="../js/coder/util.js"></script>
+  <script src="../js/coder/calculos.js"></script>
+  <script src="../js/coder/main.js"></script>
+
+
 </body>
+
+
 
 </html>
