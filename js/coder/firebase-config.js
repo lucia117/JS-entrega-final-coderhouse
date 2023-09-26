@@ -17,6 +17,7 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
+// Registrar un nuevo usuario
 const registrarUsuarioFirebase = async (email, password) => {
     console.log("comienzo a guardar", firebase)
     firebase.auth().createUserWithEmailAndPassword(email, password)
@@ -37,11 +38,10 @@ const registrarUsuarioFirebase = async (email, password) => {
             var errorCode = error.code;
             var errorMessage = error.message;
             Swal.fire('Error', errorMessage, 'error');
-
-            // ..
         });
 }
 
+//Iniciar sesion
 const iniciarSesionFirebase = async (email, password) => {
     console.log("comienzo", email, password);
     firebase.auth().signInWithEmailAndPassword(email, password)
@@ -60,24 +60,38 @@ const iniciarSesionFirebase = async (email, password) => {
         });
 }
 
+//Guardar infotmacion inicial en storage
+const guardarInformacionDbUsuario = async (email, persona, modal) => {
+    await db.collection(email).add({ ...persona })
+        .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+            Swal.fire('Éxito', '¡Datos registrados!', 'success').then(result => {
+                if (result.isConfirmed) {
+                    modal.hide()
+                    cargarPaginaPrincipal()
+                }
+            })
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+            Swal.fire('Error', 'Error adding document.', 'error');
 
-const guardarInformacionDbUsuario = async (email) => {
-    console.log("creando coleccion")
-    await db.collection(email).add({
-        email,
-    });
+        });
 }
 
-const guardarInformacionUsuario = async (email, persona, modal
+//actualizar informacion
+const actualizarInformacionUsuario = async (email, persona, modal
 ) => {
     db.collection(email).get().then(resultId => {
         const id = resultId.docs[0].id;
         const doc = db.collection(email).doc(id);
+
         const updates = { ...persona }
         doc.update(updates).then(
             Swal.fire('Éxito', '¡Datos registrados!', 'success').then(result => {
                 if (result.isConfirmed) {
                     modal.hide()
+                    cargarPaginaPrincipal()
                 }
             })
         )
@@ -88,6 +102,29 @@ const guardarInformacionUsuario = async (email, persona, modal
             console.log("bad", errorCode, errorMessage);
             Swal.fire('Error', 'Credenciales incorrectas. Por favor, inténtalo de nuevo.', 'error');
         });
+}
+
+// Obtengo la informacion del storage 
+const obtenerInformacionUsuario = async (email) => {
+    return db.collection(email).get().then((querySnapshot) => {
+        let data;
+        querySnapshot.forEach((doc) => {
+            data = doc.data();
+        });
+        return data
+    });
+}
+
+
+
+
+/* 
+const leer = async (email = "mail@mail.com") => {
+    db.collection(email).get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
+        });
+    });
 }
 
 const guardarNuevoPeso = async (email, peso, modal
@@ -110,30 +147,9 @@ const guardarNuevoPeso = async (email, peso, modal
             console.log("bad", errorCode, errorMessage);
             Swal.fire('Error', 'Credenciales incorrectas. Por favor, inténtalo de nuevo.', 'error');
         });
-}
+} */
 
 
-
-const obtenerInformacionUsuario = async (email) => {
-
-    return db.collection(email).get().then((querySnapshot) => {
-        let data;
-        querySnapshot.forEach((doc) => {
-            data = doc.data();
-        });
-        return data
-    });
-}
-
-
-
-const leer = async (email = "mail@mail.com") => {
-    db.collection(email).get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
-        });
-    });
-}
 /*
 Agregar
 

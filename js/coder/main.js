@@ -1,7 +1,6 @@
 const EMAIL = localStorage.getItem("email")
 const myModal = new bootstrap.Modal(document.getElementById('registoModal'))
 const registrarPesoModal = new bootstrap.Modal(document.getElementById('registrarPesoModal'))
-registrarPesoModal.show();
 
 // Definición de la clase Persona para almacenar los datos del usuario
 function Persona({ nombre, sexo, fechaNacimiento, altura, pesoActual, aniosSobrepeso, contextura }) {
@@ -12,15 +11,15 @@ function Persona({ nombre, sexo, fechaNacimiento, altura, pesoActual, aniosSobre
     this.pesoActual = pesoActual;
     this.anioSobrepeso = aniosSobrepeso;
     this.contextura = contextura;
-
 }
 
 cargarPaginaPrincipal()
 
-
-document.getElementById("btn-cargar-inicial").addEventListener("click", (e) => {
-    cargarInfoInicial();
-});
+// Asignar funciones a los botones
+document.getElementById("btn-cargar-inicial").addEventListener("click", (e) => cargarInfoInicial());
+document.getElementById("btn-modal-peso").addEventListener("click", (e) => registrarPesoModal.show());
+document.getElementById("btn-guardar-registro").addEventListener("click", (e) => cargarnNuevoRegistro());
+document.getElementById("btn-salir").addEventListener("click", (e) => cerrarSesion());
 
 
 
@@ -57,101 +56,45 @@ function cargarInfoInicial() {
     persona.pesoIdeal = calcPesoIdeal(persona);
     persona.pesoPosible = calcPesoPosible(persona, persona.pesoIdeal).toFixed(2);
     persona.historialPeso = [{ fecha: new Date().toISOString().split('T')[0], peso: persona.pesoActual, imc }]
-    guardarInformacionUsuario(EMAIL, persona, myModal)
+    guardarInformacionDbUsuario(EMAIL, persona, myModal)
 }
-
 
 //Funcion para cargar pagina principa
 function cargarPaginaPrincipal() {
-    if (EMAIL !== null) {
+    if (localStorage.getItem("email")) {
         obtenerInformacionUsuario(EMAIL).then(result => {
             localStorage.setItem(EMAIL, JSON.stringify(result))
-
-            cargarInformacionPersonal();
-            generarTabla();
+            if (JSON.stringify(result) !== '{}') {
+                cargarInformacionPersonal();
+                generarTabla();
+                generarGrafica();
+            } else {
+                myModal.show();
+            }
         });
     } else {
-        //abro modal
-        myModal.show();
+        window.location.href = "../index.html";
     }
 }
 
-// Agregar un evento de escucha al formulario para manejar el envío
-/* document.querySelector("#form-calculo").addEventListener("submit", (e) => {
-    e.preventDefault();
-    mostrarInformacionNutricional();
-});
- */
-//Sale de la pagina principal
-/* document.getElementById("btn-salir").addEventListener("click", (e) => {
-    window.location.href = "./index.html";
-});
- */
-// Función para mostrar la información nutricional después de la validación
-function mostrarInformacionNutricional() {
-    // Obtener los valores de los inputs
-    let sexo = document.querySelector("#sexo-input").value;
-    let edad = parseInt(document.querySelector("#edad-input").value);
-    let altura = parseFloat(document.querySelector("#altura-input").value);
-    let contextura = document.querySelector("#contextura-input").value;
-    let pesoActual = parseFloat(document.querySelector("#peso-input").value);
-    let anioSobrepeso = parseInt(document.querySelector("#anios-input").value);
-
-    // Validar las entradas del usuario
-    if (!validarEntradas(edad, contextura, pesoActual, anioSobrepeso)) {
-        alert("Por favor, ingresa valores válidos.");
-        return;
-    }
-
-    // Calcular el IMC, peso ideal y peso posible
-    let imc = calcIMC(persona);
-    let pesoIdeal = calcPesoIdeal(persona);
-    let pesoPosible = calcPesoPosible(persona, pesoIdeal);
-
-    let persona = new Persona({ sexo, edad, altura, pesoActual, anioSobrepeso, contextura, imc, pesoIdeal, pesoPosible });
-
-
-
-    location.reload();
-}
-
-// Función para validar las entradas del usuario
-function validarEntradas(fechaNacimiento, contextura, peso, anios) {
-    const fechaNacimientoValid = fechaNacimiento && !isNaN(fechaNacimiento) && fechaNacimiento >= 10;
-    const contexturaValid = contextura && contextura.trim() !== "";
-    const pesoValid = peso && !isNaN(peso) && peso > 0;
-    const aniosValid = anios && !isNaN(anios) || anios > 0;
-
-    return fechaNacimientoValid && contexturaValid && pesoValid && aniosValid;
-}
-
-
-document.getElementById("btn-guardar-registro").addEventListener("click", (e) => {
-    //Valido si no esta vacio 
+//Funcion para cargar un peso 
+function cargarnNuevoRegistro() {
     let peso = document.getElementById("registro-peso").value;
     let fecha = document.getElementById("fecha-peso").value;
     if (peso !== "" && fecha !== "") {
-        cargarnNuevoRegistro(peso, fecha);
+        if (fecha >= new Date().toISOString().split('T')[0]) {
+            let dataStorage = JSON.parse(localStorage.getItem(EMAIL))
+            let imc = calcIMC({ ...dataStorage, pesoActual: peso })
+            dataStorage.historialPeso = handlerRegistroPeso(fecha, dataStorage.historialPeso, peso, imc);
+            localStorage.setItem(EMAIL, JSON.stringify(dataStorage));
+            actualizarInformacionUsuario(EMAIL, dataStorage, registrarPesoModal);
+        } else {
+            Swal.fire('Error', 'La fecha no debe ser menor a hoy.', 'error');
+        }
     } else {
         Swal.fire('Error', 'Debe completar el formulario.', 'error');
     }
-});
-
-
-//Funcion para cargar un peso 
-function cargarnNuevoRegistro(peso, fecha) {
-    let dataStorage = JSON.parse(localStorage.getItem(EMAIL))
-    let imc = calcIMC({ ...dataStorage, pesoActual: peso })
-    dataStorage.historialPeso.push({
-        peso,
-        fecha,
-        imc
-    })
-    localStorage.setItem(EMAIL, JSON.stringify(dataStorage));
-    guardarInformacionUsuario(EMAIL, dataStorage, registrarPesoModal);
-
 }
-
 
 //Funcion que muestra el historial de pesos
 function generarTabla() {
@@ -171,18 +114,21 @@ function generarTabla() {
     table.innerHTML = rows;
 }
 
-
 //Funcion para cargar datos personales
 function cargarInformacionPersonal() {
 
     const data = JSON.parse(localStorage.getItem(EMAIL))
+    const registroPeso = data.historialPeso[data.historialPeso.length - 1]
+    //saludo 
+    document.getElementById("saludo").textContent = "Hola " + data.nombre[0].toUpperCase() + data.nombre.substring(1) + "!";
+
     //ultimo peso registrado
-    document.getElementById("ultimo-peso").textContent = data.historialPeso[data.historialPeso.length - 1].peso;
-    document.getElementById("fecha-ultimo-peso").textContent = formatearFecha(data.historialPeso[data.historialPeso.length - 1].fecha);
+    document.getElementById("ultimo-peso").textContent = registroPeso.peso + " Kg";
+    document.getElementById("fecha-ultimo-peso").textContent = formatearFecha(registroPeso.fecha);
 
     //IMC
-    document.getElementById("imc").textContent = data.imc[0] + " Kg/m²";
-    document.getElementById("tipo-imc").textContent = data.imc[1];
+    document.getElementById("imc").textContent = registroPeso.imc[0] + " Kg/m²";
+    document.getElementById("tipo-imc").textContent = registroPeso.imc[1];
 
     //Peso ideal
     document.getElementById("peso-ideal").textContent = data.pesoIdeal + " Kg";
@@ -191,4 +137,149 @@ function cargarInformacionPersonal() {
     document.getElementById("peso-posible").textContent = (parseFloat(data.pesoPosible) - 1).toFixed(2) + "-" + (parseFloat(data.pesoPosible) + 1).toFixed(2) + "Kg";
 }
 
+//Funcion para generar la grafica
+function generarGrafica() {
 
+    const data = JSON.parse(localStorage.getItem(EMAIL))
+    const dataHistorial = data.historialPeso;
+
+    let mayorPeso = parseInt(data.historialPeso[0].peso);
+    const pesoIdeal = parseInt(data.pesoIdeal);
+
+    const pesos = [];
+    const fechas = [];
+
+    dataHistorial.forEach(item => {
+        if (item.peso) {
+            if (parseFloat(item.peso) > parseFloat(mayorPeso)) { mayorPeso = item.peso }
+            pesos.push(parseFloat(item.peso));
+        }
+        if (item.fecha) {
+            fechas.push(formatearFecha(item.fecha));
+        }
+    });
+
+    var areaData = {
+
+        labels: fechas,
+        datasets: [
+            {
+                data: pesos,
+                borderColor: [
+                    '#4747A1'
+                ],
+                borderWidth: 4,
+                fill: false,
+                label: "Orders"
+            }
+        ]
+    };
+    var areaOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            filler: {
+                propagate: false
+            }
+        },
+        scales: {
+            xAxes: [{
+                display: true,
+                ticks: {
+                    display: true,
+                    padding: 10,
+                    fontColor: "#6C7383"
+                },
+                gridLines: {
+                    display: false,
+                    drawBorder: false,
+                    color: 'transparent',
+                    zeroLineColor: '#eeeeee'
+                }
+            }],
+            yAxes: [{
+                display: true,
+                ticks: {
+                    display: true,
+                    autoSkip: false,
+                    maxRotation: 90,
+                    stepSize: 5,
+                    min: parseInt(pesoIdeal),
+                    max: parseInt(mayorPeso),
+                    padding: 18,
+                    fontColor: "#6C7383"
+                },
+                gridLines: {
+                    display: true,
+                    color: "#f2f2f2",
+                    drawBorder: false
+                }
+            }]
+        },
+        legend: {
+            display: false
+        },
+        tooltips: {
+            enabled: true
+        },
+        elements: {
+            line: {
+                tension: .35
+            },
+            point: {
+                radius: 0
+            }
+        }
+    }
+    var revenueChartCanvas = $("#order-chart").get(0).getContext("2d");
+    var revenueChart = new Chart(revenueChartCanvas, {
+        type: 'line',
+        data: areaData,
+        options: areaOptions
+    });
+
+
+}
+
+//Funcion para manejar el historial de peso
+function handlerRegistroPeso(fecha, historial, peso, imc) {
+    let cambio = false;
+
+    //Verifico si ya existe el registro, si existe, sobrescribo el peso
+    for (let i = 0; i < historial.length; i++) {
+        if (historial[i].fecha === fecha) {
+            cambio = true;
+            historial[i].peso = peso;
+            historial[i].imc = imc;
+        }
+    }
+    // si no existe, creo un nuevo registro
+    if (!cambio) {
+        historial.push({
+            peso,
+            fecha,
+            imc
+        })
+    }
+
+    //ordeno los registros por fecha
+    historial = ordenarHistorialPorFecha(historial)
+
+    return historial;
+}
+
+function ordenarHistorialPorFecha(historial) {
+    let historialOrdenado = historial.sort((a, b) => {
+        const fechaA = new Date(a.fecha);
+        const fechaB = new Date(b.fecha);
+        return fechaA - fechaB;
+    });
+
+    return historialOrdenado
+}
+
+function cerrarSesion() {
+    localStorage.removeItem(EMAIL);
+    localStorage.removeItem("email");
+    window.location.href = "../index.html";
+}

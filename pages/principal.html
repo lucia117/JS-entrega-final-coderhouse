@@ -43,9 +43,7 @@
         <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
           <span class="icon-menu"></span>
         </button>
-
         <ul class="navbar-nav navbar-nav-right">
-
           <li class="nav-item nav-profile dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
               <img src="../images/faces/face28.jpg" alt="profile" />
@@ -55,7 +53,7 @@
                 <i class="ti-settings text-primary"></i>
                 Configuraciones
               </a>
-              <a class="dropdown-item">
+              <a class="dropdown-item" id="btn-salir">
                 <i class="ti-power-off text-primary"></i>
                 Salir
               </a>
@@ -118,15 +116,6 @@
       <!-- partial -->
       <div class="main-panel">
         <div class="content-wrapper">
-          <div class="row">
-            <div class="col-md-12 grid-margin">
-              <div class="row">
-                <div class="col-12 col-xl-8 mb-1 mb-xl-0">
-                  <h3 class="font-weight-bold">Welcome Aamir</h3>
-                </div>
-              </div>
-            </div>
-          </div>
 
 
           <div class="row">
@@ -138,12 +127,10 @@
                   <div class="weather-info">
                     <div class="d-flex">
                       <div>
-                        <h2 class="mb-0 font-weight-normal"><i class="icon-sun mr-2"></i>31<sup>C</sup></h2>
+                        <h2 class="mb-0 font-weight-normal" id="saludo"><sup>
+                        </h2>
                       </div>
-                      <div class="ml-2">
-                        <h4 class="location font-weight-normal">Bangalore</h4>
-                        <h6 class="font-weight-normal">India</h6>
-                      </div>
+
                     </div>
                   </div>
                 </div>
@@ -153,6 +140,7 @@
               <div class="row">
                 <div class="col-md-6 mb-4 stretch-card transparent">
                   <div class="card card-tale">
+
                     <!--ultimo peso registrado -->
                     <div class="card-body">
                       <p class="mb-4">Ultimo peso registrado</p>
@@ -191,6 +179,12 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <button type="button" id="btn-modal-peso" class="btn btn-primary btn-lg btn-block  mt-3">
+                  <h5><i class="mdi mdi-plus-circle pt-3"></i>
+                    Registrar Nuevo Peso</h5>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -222,9 +216,10 @@
             <div class="col-md-6 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <p class="card-title">Historial de Peso</p>
-                  <p class="font-weight-500">The total number of sessions within the date range. It is the period time a
-                    user is actively engaged with your website, page or app, etc</p>
+                  <p class="card-title">Curva de Peso</p>
+                  <p class="font-weight-500">La curva de peso es un gráfico que muestra la evolución del peso a lo largo
+                    del tiempo. Esta curva proporciona información crucial sobre las tendencias de aumento o disminución
+                    de peso</p>
                   <canvas id="order-chart"></canvas>
                 </div>
               </div>
@@ -247,7 +242,7 @@
 
   <!-- Modal para calcular peso -->
   <div class="modal fade" id="registoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="registoModal" aria-hidden="true">
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
 
     <div class="modal-dialog">
       <div class="modal-content">
@@ -315,10 +310,11 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body pt-2">
-          <label for="" class="col-form-label">Peso actual:</label>
+          <label for="" class="col-form-label">Peso:</label>
           <input type="number" class="form-control form-control-sm " id="registro-peso">
           <label for="" class="col-form-label">Fecha:</label>
-          <input type="date" class="form-control form-control-sm" id="fecha-peso">
+          <input type="date" class="form-control form-control-sm" id="fecha-peso" min="2050-01-01"
+            onfocus="this.min=new Date().toISOString().split('T')[0]">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -344,12 +340,6 @@
   <script src="../vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
   <script src="../js/dataTables.select.min.js"></script>
   <script src="../js/template.js"></script>
-
-
-  <script src="../js/dashboard.js"></script>
-
-
-
 
   <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-firestore.js"></script>
